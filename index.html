@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Clone</title>
+  <!-- Google Material Symbols -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  
+  <style>
+    :root {
+      --bg-primary: #0f0f0f;
+      --bg-secondary: #222222;
+      --bg-hover: #272727;
+      --bg-chip: #272727;
+      --bg-chip-active: #ffffff;
+      --text-primary: #f1f1f1;
+      --text-secondary: #aaaaaa;
+      --text-chip-active: #0f0f0f;
+      --border-color: #303030;
+      --accent-red: #ff0000;
+      --sidebar-width: 240px;
+      --header-height: 56px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Roboto, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-height);
+      background-color: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 100;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-left, .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      font-size: 1.1rem;
+    }
+
+    .logo-icon {
+      color: var(--accent-red);
+      font-size: 28px;
+    }
+
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 1 600px;
+    }
+
+    .search-form {
+      display: flex;
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--border-color);
+      border-radius: 40px;
+      overflow: hidden;
+      background-color: #121212;
+    }
+
+    .search-form input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 0 16px;
+      color: var(--text-primary);
+      font-size: 15px;
+      outline: none;
+    }
+
+    .search-btn {
+      width: 64px;
+      background-color: var(--bg-secondary);
+      border: none;
+      border-left: 1px solid var(--border-color);
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-btn:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .mic-btn {
+      background-color: var(--bg-secondary);
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #795548;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* Layout */
+    .layout-body {
+      display: flex;
+      margin-top: var(--header-height);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      height: calc(100vh - var(--header-height));
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      background-color: var(--bg-primary);
+      overflow-y: auto;
+      padding: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar.collapsed {
+      transform: translateX(-100%);
+    }
+
+    .sidebar-section {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-heading {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 8px 12px;
+    }
+
+    .sidebar-divider {
+      border: 0;
+      height: 1px;
+      background-color: var(--border-color);
+      margin: 10px 0;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .nav-item:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .nav-item.active {
+      background-color: var(--bg-secondary);
+      font-weight: 500;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      padding: 16px 24px;
+      transition: margin-left 0.2s ease;
+    }
+
+    .sidebar.collapsed ~ .main-content {
+      margin-left: 0;
+    }
+
+    /* Chips */
+    .chips-container {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+      scrollbar-width: none;
+    }
+
+    .chips-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: none;
+      background-color: var(--bg-chip);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .chip:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .chip.active {
+      background-color: var(--bg-chip-active);
+      color: var(--text-chip-active);
+    }
+
+    /* Video Grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px 16px;
+    }
+
+    .video-card {
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .thumbnail-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+    }
+
+    .thumbnail-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.2s;
+    }
+
+    .video-card:hover .thumbnail-img {
+      transform: scale(1.02);
+    }
+
+    .duration-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background-color: rgba(0, 0, 0, 0.85);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .video-details {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .video-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .video-title {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .channel-name, .video-stats {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Modal Player */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-content {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      width: 100%;
+      max-width: 900px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .player-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background-color: #000;
+    }
+
+    .player-wrapper video {
+      width: 100%;
+      height: 100%;
+    }
+
+    .modal-info {
+      padding: 16px;
+    }
+
+    .modal-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .channel-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sub-count {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 20px;
+      background-color: var(--bg-secondary);
+      border: none;
+      color: var(--text-primary);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .action-btn:hover {
+      background-color: var(--bg-hover);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 900px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open-mobile {
+        transform: translateX(0);
+        z-index: 99;
+      }
+      .main-content {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <button class="icon-btn" id="menuToggle" aria-label="Toggle menu">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <a href="#" class="logo">
+        <span class="material-symbols-outlined logo-icon">smart_display</span>
+        <span class="logo-text">YouTube</span>
+      </a>
+    </div>
+
+    <div class="header-center">
+      <form class="search-form" id="searchForm">
+        <input type="text" id="searchInput" placeholder="Search" aria-label="Search" autocomplete="off" />
+        <button type="submit" class="search-btn" aria-label="Search button">
+          <span class="material-symbols-outlined">search</span>
+        </button>
+      </form>
+      <button class="icon-btn mic-btn" aria-label="Voice search">
+        <span class="material-symbols-outlined">mic</span>
+      </button>
+    </div>
+
+    <div class="header-right">
+      <button class="icon-btn" aria-label="Create video">
+        <span class="material-symbols-outlined">video_call</span>
+      </button>
+      <button class="icon-btn" aria-label="Notifications">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <div class="avatar" title="User Profile">U</div>
+    </div>
+  </header>
+
+  <div class="layout-body">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <nav class="sidebar-section">
+        <a href="#" class="nav-item active">
+          <span class="material-symbols-outlined">home</span>
+          <span class="nav-label">Home</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined">explore</span>
+          <span class="nav-label">Explore</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined">subscriptions</span>
+          <span class="nav-label">Subscriptions</span>
+        </a>
+      </nav>
+
+      <hr class="sidebar-divider" />
+
+      <nav class="sidebar-section">
+        <div class="sidebar-heading">You</div>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined">history</span>
+          <span class="nav-label">History</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined">playlist_play</span>
+          <span class="nav-label">Playlists</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined">schedule</span>
+          <span class="nav-label">Watch Later</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined">thumb_up</span>
+          <span class="nav-label">Liked videos</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Filter Chips -->
+      <section class="chips-container" id="chipsContainer">
+        <button class="chip active" data-category="All">All</button>
+        <button class="chip" data-category="Programming">Programming</button>
+        <button class="chip" data-category="Music">Music</button>
+        <button class="chip" data-category="Podcasts">Podcasts</button>
+        <button class="chip" data-category="Gaming">Gaming</button>
+        <button class="chip" data-category="Nature">Nature</button>
+        <button class="chip" data-category="Science">Science</button>
+      </section>
+
+      <!-- Video Grid -->
+      <section class="video-grid" id="videoGrid"></section>
+    </main>
+  </div>
+
+  <!-- Video Modal Player -->
+  <div class="modal" id="videoModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose" aria-label="Close modal">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div class="player-wrapper">
+        <video id="modalVideoPlayer" controls autoplay></video>
+      </div>
+      <div class="modal-info">
+        <h2 id="modalVideoTitle"></h2>
+        <div class="modal-meta">
+          <div class="channel-group">
+            <div class="avatar" id="modalChannelAvatar"></div>
+            <div>
+              <div class="channel-name" id="modalChannelName"></div>
+              <div class="sub-count" id="modalSubCount">1.2M subscribers</div>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="action-btn" id="likeBtn">
+              <span class="material-symbols-outlined">thumb_up</span> Like
+            </button>
+            <button class="action-btn">
+              <span class="material-symbols-outlined">share</span> Share
+            </button>
+            <button class="action-btn">
+              <span class="material-symbols-outlined">download</span> Download
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    const videos = [
+      {
+        id: 1,
+        title: "Building Modern Web Applications with JavaScript and Node.js",
+        channel: "Tech Forward",
+        category: "Programming",
+        views: "340K views",
+        uploaded: "3 days ago",
+        duration: "14:22",
+        thumbnail: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        avatarBg: "#1e88e5"
+      },
+      {
+        id: 2,
+        title: "Relaxing Deep Focus Lo-Fi Beats - Study & Work Session",
+        channel: "Chill Frequency",
+        category: "Music",
+        views: "1.2M views",
+        uploaded: "1 week ago",
+        duration: "45:10",
+        thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        avatarBg: "#8e24aa"
+      },
+      {
+        id: 3,
+        title: "Exploring Hidden Waterfalls and Ancient Rainforests",
+        channel: "Wild Odyssey",
+        category: "Nature",
+        views: "89K views",
+        uploaded: "4 days ago",
+        duration: "09:45",
+        thumbnail: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        avatarBg: "#43a047"
+      },
+      {
+        id: 4,
+        title: "How Quantum Computing Will Change the Future of Cryptography",
+        channel: "Future Physics",
+        category: "Science",
+        views: "512K views",
+        uploaded: "2 weeks ago",
+        duration: "18:05",
+        thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        avatarBg: "#d81b60"
+      },
+      {
+        id: 5,
+        title: "The Ultimate Mechanical Keyboard Build & Sound Test",
+        channel: "Studio Desk",
+        category: "Gaming",
+        views: "220K views",
+        uploaded: "5 days ago",
+        duration: "11:30",
+        thumbnail: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        avatarBg: "#fb8c00"
+      },
+      {
+        id: 6,
+        title: "Startup Founders Discussing Product-Market Fit & Funding",
+        channel: "Founder Talk Podcast",
+        category: "Podcasts",
+        views: "74K views",
+        uploaded: "6 hours ago",
+        duration: "52:18",
+        thumbnail: "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+        avatarBg: "#00acc1"
+      }
+    ];
+
+    const videoGrid = document.getElementById("videoGrid");
+    const chipsContainer = document.getElementById("chipsContainer");
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebar = document.getElementById("sidebar");
+
+    const videoModal = document.getElementById("videoModal");
+    const modalClose = document.getElementById("modalClose");
+    const modalVideoPlayer = document.getElementById("modalVideoPlayer");
+    const modalVideoTitle = document.getElementById("modalVideoTitle");
+    const modalChannelName = document.getElementById("modalChannelName");
+    const modalChannelAvatar = document.getElementById("modalChannelAvatar");
+    const likeBtn = document.getElementById("likeBtn");
+
+    let activeCategory = "All";
+
+    function renderVideos(items) {
+      videoGrid.innerHTML = "";
+
+      if (items.length === 0) {
+        videoGrid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-secondary);">
+            <h3>No videos found</h3>
+            <p>Try searching for a different keyword or selecting another category.</p>
+          </div>`;
+        return;
+      }
+
+      items.forEach((video) => {
+        const card = document.createElement("article");
+        card.className = "video-card";
+        card.setAttribute("tabindex", "0");
+        card.innerHTML = `
+          <div class="thumbnail-container">
+            <img class="thumbnail-img" src="${video.thumbnail}" alt="${video.title}" loading="lazy" />
+            <span class="duration-badge">${video.duration}</span>
+          </div>
+          <div class="video-details">
+            <div class="avatar" style="background-color: ${video.avatarBg};">${video.channel[0]}</div>
+            <div class="video-info">
+              <h3 class="video-title">${video.title}</h3>
+              <span class="channel-name">${video.channel}</span>
+              <span class="video-stats">${video.views} • ${video.uploaded}</span>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener("click", () => openVideoModal(video));
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            openVideoModal(video);
+          }
+        });
+
+        videoGrid.appendChild(card);
+      });
+    }
+
+    function openVideoModal(video) {
+      modalVideoTitle.textContent = video.title;
+      modalChannelName.textContent = video.channel;
+      modalChannelAvatar.textContent = video.channel[0];
+      modalChannelAvatar.style.backgroundColor = video.avatarBg;
+      modalVideoPlayer.src = video.videoUrl;
+      videoModal.classList.add("open");
+      modalVideoPlayer.play().catch(() => {});
+    }
+
+    function closeModal() {
+      videoModal.classList.remove("open");
+      modalVideoPlayer.pause();
+      modalVideoPlayer.src = "";
+    }
+
+    modalClose.addEventListener("click", closeModal);
+    videoModal.addEventListener("click", (e) => {
+      if (e.target === videoModal) closeModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && videoModal.classList.contains("open")) {
+        closeModal();
+      }
+    });
+
+    chipsContainer.addEventListener("click", (e) => {
+      if (!e.target.classList.contains("chip")) return;
+      document.querySelectorAll(".chip").forEach((chip) => chip.classList.remove("active"));
+      e.target.classList.add("active");
+      activeCategory = e.target.getAttribute("data-category");
+      filterAndRender();
+    });
+
+    searchForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      filterAndRender();
+    });
+
+    searchInput.addEventListener("input", () => {
+      filterAndRender();
+    });
+
+    function filterAndRender() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const filtered = videos.filter((video) => {
+        const matchesCategory = activeCategory === "All" || video.category === activeCategory;
+        const matchesSearch =
+          video.title.toLowerCase().includes(searchTerm) ||
+          video.channel.toLowerCase().includes(searchTerm);
+        return matchesCategory && matchesSearch;
+      });
+      renderVideos(filtered);
+    }
+
+    menuToggle.addEventListener("click", () => {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.toggle("open-mobile");
+      } else {
+        sidebar.classList.toggle("collapsed");
+      }
+    });
+
+    let isLiked = false;
+    likeBtn.addEventListener("click", () => {
+      isLiked = !isLiked;
+      likeBtn.style.color = isLiked ? "#3ea6ff" : "var(--text-primary)";
+    });
+
+    // Initial render
+    renderVideos(videos);
+  </script>
+</body>
+</html>
